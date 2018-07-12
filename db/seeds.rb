@@ -10,6 +10,10 @@ people = YAML.load_file('db/people.yml')
 State.destroy_all
 District.destroy_all
 Person.destroy_all
+Role.destroy_all
+Role.create(role_type: 'candidate')
+Role.create(role_type: 'voter')
+
 state_districts.each do |state|
   name = state.keys.first
   puts name
@@ -22,12 +26,33 @@ state_districts.each do |state|
 end
 
 people.each do |full_name|
-  puts full_name
+  voter_role = Role.where(role_type: 'voter').first
+  candidate_role = Role.where(role_type: 'candidate').first
   first_name, last_name = full_name.split(' ')
   ar_person = Person.where(first_name: first_name, last_name: last_name).first_or_create
+  if rand(10) == 9
+    next
+  elsif rand(50) == 0
+    ar_person.roles << candidate_role
+  elsif rand(20) == 0
+    ar_person.roles << candidate_role
+    ar_person.roles << voter_role
+  else
+    ar_person.roles << voter_role
+  end
   state = State.order('RANDOM()').first
   district = state.districts.sample
   ar_person.district = district
   ar_person.save
 end
 
+District.all.each_with_index do |district, i|
+  #each district gets at least two candidates
+  candidate1 = Person.create(first_name: "candidate#{i}a-firstname", last_name: "candidate#{i}a-lastname")
+  candidate2 = Person.create(first_name: "candidate#{i}b-firstname", last_name: "candidate#{i}b-lastname")
+  candidate_role = Role.where(role_type: 'candidate').first
+  candidate1.roles << candidate_role
+  candidate2.roles << candidate_role
+  district.people << candidate1
+  district.people << candidate2
+end

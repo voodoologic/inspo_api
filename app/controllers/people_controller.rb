@@ -1,21 +1,21 @@
 class PeopleController < ApplicationController
-  before_action :set_derp, only: [:show, :update, :destroy]
+  before_action :set_person, only: [:show, :update, :destroy]
 
   # GET /people
   def index
-    @peopel = Person.all
+    @people = Person.all
 
     render jsonapi: @people
   end
 
   # GET /person/1
   def show
-    render jsonapi: @person
+    render jsonapi: @person, include: [:roles, :district]
   end
 
   # POST /person
   def create
-    @person = Person.new(derp_params)
+    @person = Person.new(person_params)
 
     if @person.save
       render json: @person, status: :created, location: @person
@@ -46,6 +46,6 @@ class PeopleController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def person_params
-      params.fetch(:person, {})
+      params.dig('_jsonapi', 'data', 'attributes').permit( 'first_name', 'email', 'last_name')
     end
 end
