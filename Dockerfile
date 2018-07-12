@@ -18,7 +18,7 @@ RUN curl -O http://ftp.ruby-lang.org/pub/ruby/2.5/ruby-${RUBY_VERSION}.tar.gz &&
     rm -r ruby-${RUBY_VERSION} ruby-${RUBY_VERSION}.tar.gz && \
     echo 'gem: --no-document' > /usr/local/etc/gemrcdoc
 
-LABEL container=hatorade-rails
+LABEL container=inspo-rails
 # We need postgres for pg gem
 RUN apt-get install -y \
     git-core postgresql-client libpq-dev\
@@ -41,7 +41,6 @@ ADD ./ /opt/inspo_rails
 
 WORKDIR /opt/inspo_rails
 
-# RUN chmod 755 /hatorade
 
 ENV RAILS_ENV development
 
