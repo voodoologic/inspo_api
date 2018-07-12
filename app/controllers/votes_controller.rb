@@ -3,7 +3,7 @@ class VotesController < ApplicationController
 
   # GET /votes
   def index
-    @VOte = Vote.all
+    @votes = Vote.all
 
     render jsonapi: @votes
   end
@@ -15,7 +15,10 @@ class VotesController < ApplicationController
 
   # POST /votes
   def create
-    @vote = Vote.new(vote_params)
+    vote_attrs = { }
+    vote_attrs[:voter_id] = params.dig('_jsonapi', 'data', 'relationships' , 'voter', 'data', 'id')
+    vote_attrs[:candidate_id] = params.dig('_jsonapi', 'data', 'relationships' , 'candidate', 'data', 'id')
+    @vote = Vote.new(vote_attrs)
 
     if @vote.save
       render jsonapi: @vote, status: :created, location: @vote
@@ -26,6 +29,7 @@ class VotesController < ApplicationController
 
   # PATCH/PUT /votes/1
   def update
+
     if @vote.update(vote_params)
       render jsonapi: @vote
     else
@@ -46,6 +50,7 @@ class VotesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def vote_params
-      params.dig('_jsonapi', 'data', 'attributes').permit('voter_id', 'candidate_id')
+      params.dig('_jsonapi', 'data', 'relationships' , 'voter', 'data').permit('id')
+      params.dig('_jsonapi', 'data', 'relationships' , 'candidate', 'data').permit('id')
     end
 end
