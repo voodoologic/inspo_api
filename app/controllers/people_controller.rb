@@ -3,9 +3,14 @@ class PeopleController < ApplicationController
 
   # GET /people
   def index
-    @people = Person.all
+    params.permit(:ids)
+    if params[:ids]
+      @people = Person.where(id: params[:ids])
+    else
+      @people = Person.all
+    end
 
-    render jsonapi: @people
+    render jsonapi: @people, include: [:roles]
   end
 
   # GET /person/1

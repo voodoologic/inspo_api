@@ -5,4 +5,7 @@ class Person < ApplicationRecord
   has_one :vote, foreign_key: :voter_id
   has_one :candidate, through: :vote, foreign_key: :candidate_id
   delegate :state, to: :district
+  def candidate?
+    roles.detect{|r| r.role_type == 'candidate'}
+  end
 end

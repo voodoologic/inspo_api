@@ -10,7 +10,8 @@ class DistrictsController < ApplicationController
 
   # GET /districts/1
   def show
-    render jsonapi: @district, include: [:state, :people]
+    render jsonapi: @district, include: [:state, :people],
+      fields: { people: [:first_name, :last_name, :roles] }
   end
 
   # POST /districts
